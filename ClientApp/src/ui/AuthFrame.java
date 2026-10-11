@@ -112,15 +112,15 @@ public class AuthFrame extends JFrame {
         badgePanel.add(lblBadge);
 
         JLabel lblTitle1 = new JLabel("Mỗi đơn món,");
-        lblTitle1.setFont(getCustomFont("Inter", Font.BOLD, 46));
+        lblTitle1.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 46));
         lblTitle1.setForeground(Color.WHITE);
         lblTitle1.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel lblTitle2 = new JLabel("một trải nghiệm");
-        lblTitle2.setFont(getCustomFont("Inter", Font.BOLD, 46));
+        lblTitle2.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 46));
         lblTitle2.setForeground(Color.WHITE);
         lblTitle2.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel lblTitle3 = new JLabel("trọn vẹn.");
-        lblTitle3.setFont(getCustomFont("Inter", Font.BOLD, 46));
+        lblTitle3.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 46));
         lblTitle3.setForeground(new Color(201, 142, 84));
         lblTitle3.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -156,7 +156,7 @@ public class AuthFrame extends JFrame {
 
         JPanel formContainer = new JPanel();
         formContainer.setLayout(new BoxLayout(formContainer, BoxLayout.Y_AXIS));
-        formContainer.setBackground(Color.WHITE);
+        formContainer.setOpaque(false);
 
         JLabel lblTitle = new JLabel("Chào mừng trở lại");
         lblTitle.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 40));
@@ -277,61 +277,63 @@ public class AuthFrame extends JFrame {
         formContainer.setBackground(Color.WHITE);
 
         JLabel lblTitle = new JLabel("Đăng ký tài khoản");
-        lblTitle.setFont(getCustomFont("Inter", Font.BOLD, 30));
-        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblTitle.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 40));
+        JPanel titleWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        titleWrapper.setOpaque(false);
+        titleWrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titleWrapper.add(lblTitle);
 
-        JLabel lblSubtitle = new JLabel("Tạo tài khoản để bắt đầu sử dụng hệ thống Bếp Nhà");
-        lblSubtitle.setFont(getCustomFont("Inter", Font.PLAIN, 14));
+        JLabel lblSubtitle = new JLabel("Tạo tài khoản để bắt đầu sử dụng các chức năng");
+        lblSubtitle.setFont(getCustomFont("Inter", Font.PLAIN, 22));
         lblSubtitle.setForeground(Color.GRAY);
         lblSubtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblFullName = new JLabel("Họ và tên");
-        lblFullName.setFont(getCustomFont("Inter", Font.BOLD, 12));
+        lblFullName.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 15));
         lblFullName.setAlignmentX(Component.LEFT_ALIGNMENT);
-        txtRegFullName = new CTextField("Nguyễn Minh Anh");
+        txtRegFullName = new CTextField("Nguyễn Minh Anh", 500, 50);
         txtRegFullName.setAlignmentX(Component.LEFT_ALIGNMENT); // Xóa thiết lập thừa
 
         JLabel lblEmail = new JLabel("Email");
-        lblEmail.setFont(getCustomFont("Inter", Font.BOLD, 12));
+        lblEmail.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 15));
         lblEmail.setAlignmentX(Component.LEFT_ALIGNMENT);
-        txtRegEmail = new CTextField("name@bepnha.vn");
+        txtRegEmail = new CTextField("name@bepnha.vn", 500, 50);
         txtRegEmail.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblPhone = new JLabel("Số điện thoại");
-        lblPhone.setFont(getCustomFont("Inter", Font.BOLD, 12));
+        lblPhone.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 15));
         lblPhone.setAlignmentX(Component.LEFT_ALIGNMENT);
-        txtRegPhone = new CTextField("090 123 4567");
+        txtRegPhone = new CTextField("090 123 4567", 500, 50);
         txtRegPhone.setAlignmentX(Component.LEFT_ALIGNMENT); // Xóa thiết lập thừa
 
         JLabel lblPassword = new JLabel("Mật khẩu");
-        lblPassword.setFont(getCustomFont("Inter", Font.BOLD, 12));
+        lblPassword.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 15));
         lblPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
-        txtRegPassword = new CPasswordField("••••••••");
+        txtRegPassword = new CPasswordField("••••••••", 500, 50);
         txtRegPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblConfirmPassword = new JLabel("Xác nhận mật khẩu");
-        lblConfirmPassword.setFont(getCustomFont("Inter", Font.BOLD, 12));
+        lblConfirmPassword.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 15));
         lblConfirmPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
-        txtRegConfirmPassword = new CPasswordField("••••••••");
+        txtRegConfirmPassword = new CPasswordField("••••••••", 500, 50);
         txtRegConfirmPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        btnRegister = new CButton("Đăng ký");
+        btnRegister = new CButton("Đăng ký", 500, 50);
         btnRegister.setAlignmentX(Component.LEFT_ALIGNMENT); // Xóa thiết lập thừa
         btnRegister.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Đang xử lý đăng ký...");
         });
 
-        JPanel pnlLogin = new JPanel();
-        pnlLogin.setLayout(new BoxLayout(pnlLogin, BoxLayout.X_AXIS));
+        JPanel pnlLogin = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         pnlLogin.setBackground(Color.WHITE);
-        pnlLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlLogin.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblHasAccount = new JLabel("Đã có tài khoản? ");
-        lblHasAccount.setFont(getCustomFont("Inter", Font.PLAIN, 12));
+        lblHasAccount.setFont(getCustomFont("Be Vietnam Pro Black", Font.PLAIN, 14));
         lblHasAccount.setForeground(Color.GRAY);
 
         JLabel lblLoginLink = new JLabel("Đăng nhập");
-        lblLoginLink.setFont(getCustomFont("Inter", Font.BOLD, 14));
+        lblLoginLink.setFont(getCustomFont("Be Vietnam Pro Black", Font.BOLD, 14));
         lblLoginLink.setForeground(new Color(206, 93, 52));
         lblLoginLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -345,10 +347,17 @@ public class AuthFrame extends JFrame {
         pnlLogin.add(lblHasAccount);
         pnlLogin.add(lblLoginLink);
 
-        formContainer.add(lblTitle);
+        formContainer.add(titleWrapper);
         formContainer.add(Box.createVerticalStrut(8));
         formContainer.add(lblSubtitle);
         formContainer.add(Box.createVerticalStrut(35));
+
+        JSeparator separator1 = new JSeparator(SwingConstants.HORIZONTAL);
+        separator1.setSize(new Dimension(Integer.MAX_VALUE, 10));
+        separator1.setForeground(new Color(23, 31, 26));
+        formContainer.add(separator1);
+        formContainer.add(Box.createVerticalStrut(25));
+
         formContainer.add(lblFullName);
         formContainer.add(Box.createVerticalStrut(5));
         formContainer.add(txtRegFullName);
