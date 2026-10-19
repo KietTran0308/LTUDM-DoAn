@@ -22,7 +22,6 @@
             <artifactId>dtoShared</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
         <!-- Thư viện kết nối cơ sở dữ liệu MySQL cho ServerApp -->
         <dependency>
             <groupId>com.mysql</groupId>

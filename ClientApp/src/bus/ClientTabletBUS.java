@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ClientTabletBUS {
+
     private final Long tableId;
     private final Long defaultTableUserId;
     private final SocketClient socketClient = new SocketClient();
@@ -29,9 +30,6 @@ public class ClientTabletBUS {
         socketClient.connect("localhost", 8888, tableId, this::handleServerResponse);
     }
 
-    /**
-     * Tự động phân loại gói tin từ Server trả về để cập nhật dữ liệu trong BUS và báo lên GUI
-     */
     @SuppressWarnings("unchecked")
     private void handleServerResponse(SocketPacket packet) {
         if (packet.isSuccess()) {

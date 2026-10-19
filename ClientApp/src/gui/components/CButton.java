@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class CButton extends JButton {
+
     private boolean isHover = false;
 
     private static final Dimension DEFAULT_SIZE = new Dimension(420, 50);

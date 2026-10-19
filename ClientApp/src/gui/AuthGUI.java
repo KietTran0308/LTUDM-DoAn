@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import gui.components.*;
 
-public class AuthFrame extends JFrame {
+public class AuthGUI extends JFrame {
 
     private CardLayout cardLayout;
     private JPanel rightCardPanel;
@@ -19,7 +19,7 @@ public class AuthFrame extends JFrame {
     private CTextField txtLoginEmail, txtRegFullName, txtRegEmail, txtRegPhone;
     private CPasswordField txtLoginPassword, txtRegPassword, txtRegConfirmPassword;
 
-    public AuthFrame() {
+    public AuthGUI() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Bếp Nhà Restaurant - Đăng nhập & Đăng ký");
@@ -227,7 +227,7 @@ public class AuthFrame extends JFrame {
                     new StaffGUI().setVisible(true);
                     this.dispose();
                 } else {
-                    new Customer().setVisible(true);
+                    new CustomerGUI().setVisible(true);
                     this.dispose();
                 }
             }
@@ -455,7 +455,7 @@ public class AuthFrame extends JFrame {
                 if (role.contains("STAFF") || role.contains("CASHIER") || role.contains("ADMIN")) {
                     new StaffGUI(user).setVisible(true);
                 } else {
-                    new Customer(1L, user.getId()).setVisible(true);
+                    new CustomerGUI(1L, user.getId()).setVisible(true);
                 }
                 this.dispose();
 
@@ -473,5 +473,9 @@ public class AuthFrame extends JFrame {
 
     private Font getCustomFont(String fontName, int style, int size) {
         return new Font(fontName, style, size);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new AuthGUI().setVisible(true));
     }
 }

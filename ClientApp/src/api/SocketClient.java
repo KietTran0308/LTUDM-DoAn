@@ -1,21 +1,19 @@
 package api;
 
 import dto.*;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
 public class SocketClient {
 
     private Socket socket;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private PrintWriter out;
+    private BufferedReader in;
     private boolean isConnected = false;
     private Long tableId;
 
-    // Callback truyền gói tin nhận được từ Server thẳng lên ClientTabletBUS / GUI
     private Consumer<SocketPacket> onServerPacketReceived;
 
     public boolean connect(String host, int port, Long tableId, Consumer<SocketPacket> onServerPacketReceived) {
@@ -24,23 +22,22 @@ public class SocketClient {
 
         try {
             socket = new Socket(host, port);
-            out = new ObjectOutputStream(socket.getOutputStream());
-            out.flush();
-            in = new ObjectInputStream(socket.getInputStream());
+            out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
             isConnected = true;
 
-            // Khởi chạy luồng lắng nghe bất đồng bộ từ Server
             Thread listenerThread = new Thread(this::listenFromServer);
             listenerThread.setDaemon(true);
             listenerThread.start();
 
-            // Vừa kết nối xong -> Đăng ký ngay mã bàn với Server và yêu cầu tải Thực đơn
-            sendRequest(new SocketPacket(SocketAction.REGISTER_TABLE, tableId, null, null));
-            requestMenuAndCategories();
+            if (tableId != null && tableId > 0) {
+                sendRequest(new SocketPacket(SocketAction.REGISTER_TABLE, tableId, null, null));
+                requestMenuAndCategories();
+            }
 
             return true;
         } catch (IOException e) {
-            System.err.println("[SocketClientAPI] Không kết nối được TCP Server (" + host + ":" + port + ").");
+            System.err.println("[SocketClient - JSON] Không kết nối được TCP Server (" + host + ":" + port + ").");
             isConnected = false;
             return false;
         }
@@ -48,30 +45,36 @@ public class SocketClient {
 
     private void listenFromServer() {
         try {
-            while (isConnected && !socket.isClosed()) {
-                Object response = in.readObject();
-                if (response instanceof SocketPacket && onServerPacketReceived != null) {
-                    onServerPacketReceived.accept((SocketPacket) response);
+            String rawJsonLine;
+            while (isConnected && !socket.isClosed() && (rawJsonLine = in.readLine()) != null) {
+                System.out.println("[Client <- Server JSON]: " + rawJsonLine);
+
+                // Giải mã chuỗi JSON nhận được bằng org.json thành SocketPacket
+                SocketPacket packet = SocketJsonMapper.fromJsonString(rawJsonLine);
+                if (onServerPacketReceived != null) {
+                    onServerPacketReceived.accept(packet);
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             isConnected = false;
-            System.err.println("[SocketClientAPI] Mất kết nối tới Server.");
+            System.err.println("[SocketClient - JSON] Mất kết nối tới Server: " + e.getMessage());
         }
     }
 
+    /**
+     * Đóng gói SocketPacket thành chuỗi JSON bằng org.json và gửi qua TCP Socket
+     */
     public synchronized void sendRequest(SocketPacket packet) {
         if (!isConnected || out == null) return;
         try {
-            out.reset();
-            out.writeObject(packet);
-            out.flush();
-        } catch (IOException e) {
+            String jsonPayload = SocketJsonMapper.toJsonString(packet);
+            System.out.println("[Client -> Server JSON]: " + jsonPayload);
+            out.println(jsonPayload); // Gửi 1 dòng JSON kết thúc bằng \n
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // 1. Yêu cầu lấy danh sách Món ăn (FoodDTO) + Danh mục (CategoryDTO)
     public void requestMenuAndCategories() {
         sendRequest(new SocketPacket(SocketAction.GET_MENU_AND_CATEGORIES, tableId, null, null));
     }

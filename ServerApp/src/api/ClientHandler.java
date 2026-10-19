@@ -4,17 +4,16 @@ import bus.*;
 import dao.*;
 import dto.*;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private PrintWriter out;
+    private BufferedReader in;
     private Long currentTableId;
 
     // Khởi tạo các tầng BUS và DAO của Server
@@ -32,20 +31,20 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            // Lưu ý quan trọng: Luôn khởi tạo ObjectOutputStream TRƯỚC ObjectInputStream kèm flush() để tránh Deadlock
-            out = new ObjectOutputStream(socket.getOutputStream());
-            out.flush();
-            in = new ObjectInputStream(socket.getInputStream());
+            // Khởi tạo luồng đọc/ghi chuỗi JSON UTF-8 qua TCP Socket
+            out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
-            while (!socket.isClosed()) {
-                Object received = in.readObject();
-                if (received instanceof SocketPacket) {
-                    SocketPacket request = (SocketPacket) received;
-                    handleClientRequest(request);
-                }
+            String rawJsonLine;
+            while (!socket.isClosed() && (rawJsonLine = in.readLine()) != null) {
+                System.out.println("[Server <- Client JSON]: " + rawJsonLine);
+
+                // Giải mã chuỗi JSON bằng org.json thành đối tượng SocketPacket
+                SocketPacket request = SocketJsonMapper.fromJsonString(rawJsonLine);
+                handleClientRequest(request);
             }
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("[ClientHandler] Kết nối bàn " + currentTableId + " đã đóng.");
+        } catch (Exception e) {
+            System.out.println("[ClientHandler - JSON] Kết nối bàn " + currentTableId + " đã đóng: " + e.getMessage());
         } finally {
             SocketServer.removeTableSession(currentTableId);
             closeResources();
@@ -205,17 +204,13 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * Đồng bộ hóa (synchronized) hàm gửi để tránh 2 luồng cùng ghi vào 1 ObjectOutputStream gây lỗi StreamCorruptedException
+     * Đóng gói SocketPacket thành chuỗi JSON bằng org.json và gửi về Client
      */
     public synchronized void sendPacket(SocketPacket packet) {
-        try {
-            if (out != null && !socket.isClosed()) {
-                out.reset(); // Xóa cache tham chiếu cũ của ObjectOutputStream để gửi dữ liệu mới nhất
-                out.writeObject(packet);
-                out.flush();
-            }
-        } catch (IOException e) {
-            System.err.println("[ClientHandler] Không thể gửi gói tin về Bàn " + currentTableId);
+        if (out != null && !socket.isClosed()) {
+            String jsonResponse = SocketJsonMapper.toJsonString(packet);
+            System.out.println("[Server -> Client JSON]: " + jsonResponse);
+            out.println(jsonResponse); // Gửi 1 dòng JSON kết thúc bằng \n
         }
     }
 

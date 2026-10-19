@@ -7,14 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class dbConnection {
-    // Cấu hình thông số Database (MySQL)
-    private static final String URL = "jdbc:mysql://localhost:3306/haidilao_db?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8";
+    private static final String URL = "jdbc:mysql://localhost:3306/annhien_datmon?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8";
     private static final String USER = "root";
     private static final String PASSWORD = ""; // Thay bằng mật khẩu MySQL của bạn
 
     static {
         try {
-            // Load MySQL JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             System.err.println("[Javalin DB] Không tìm thấy Driver MySQL: " + e.getMessage());

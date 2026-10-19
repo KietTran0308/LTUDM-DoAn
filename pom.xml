@@ -10,9 +10,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>dtoShared</module>
         <module>ServerApp</module>
         <module>ClientApp</module>
+        <module>dtoShared</module>
     </modules>
 
     <properties>
@@ -20,4 +20,12 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
+    </dependencies>
 </project>

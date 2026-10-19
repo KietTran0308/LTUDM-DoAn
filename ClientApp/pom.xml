@@ -22,4 +22,16 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>gui/img</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
 </project>

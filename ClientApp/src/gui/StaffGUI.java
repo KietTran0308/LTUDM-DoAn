@@ -5,6 +5,7 @@ import dto.*;
 import gui.components.*;
 
 import javax.swing.*;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -14,7 +15,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 public class StaffGUI extends JFrame {
-    // Bảng màu chuẩn "Bếp Nhà Restaurant" từ AuthFrame
+
     private static final Color FOREST_BG = new Color(32, 43, 37);
     private static final Color FOREST_CIRCLE = new Color(26, 36, 30);
     private static final Color TERRACOTTA = new Color(206, 93, 52);
@@ -92,7 +93,6 @@ public class StaffGUI extends JFrame {
         });
     }
 
-    // 1. HEADER ĐỒNG BỘ PHONG CÁCH AUTHFRAME
     private void initBrandHeader() {
         JPanel header = new JPanel(new BorderLayout()) {
             @Override
@@ -113,7 +113,7 @@ public class StaffGUI extends JFrame {
         leftBrand.setLayout(new BoxLayout(leftBrand, BoxLayout.X_AXIS));
         leftBrand.setOpaque(false);
 
-        JLabel lblIcon = new JLabel(new Customer.BrandLogoIcon());
+        JLabel lblIcon = new JLabel(new CustomerGUI.BrandLogoIcon());
         lblIcon.setBorder(new EmptyBorder(0, 0, 0, 12));
 
         JPanel titleCol = new JPanel();
@@ -154,7 +154,7 @@ public class StaffGUI extends JFrame {
         btnLogout.setBorder(new LineBorder(new Color(80, 95, 86), 1, true));
         btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnLogout.addActionListener(e -> {
-            new AuthFrame().setVisible(true);
+            new AuthGUI().setVisible(true);
             this.dispose();
         });
 
@@ -410,6 +410,16 @@ public class StaffGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new StaffGUI().setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            try {
+                System.out.println("Đang khởi động StaffGUI...");
+                StaffGUI gui = new StaffGUI();
+                gui.setVisible(true);
+                System.out.println("StaffGUI đã hiển thị thành công!");
+            } catch (Throwable t) {
+                System.err.println("LỖI NGHIÊM TRỌNG KHI KHỞI CHẠY GIAO DIỆN:");
+                t.printStackTrace(); // In toàn bộ lỗi ra console để biết bị văng ở đâu
+            }
+        });
     }
 }

@@ -12,7 +12,6 @@ public class AuthBUS {
 
     public AuthBUS(Consumer<SocketPacket> uiCallback) {
         this.uiCallback = uiCallback;
-        // Kết nối tới Server TCP cổng 8888 (Dùng tableId = -1L cho phiên đăng nhập)
         socketClient.connect("localhost", 8888, -1L, packet -> {
             if (this.uiCallback != null) {
                 this.uiCallback.accept(packet);

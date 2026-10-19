@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Customer extends JFrame {
+public class CustomerGUI extends JFrame {
     // Bảng màu chuẩn từ AuthFrame (Bếp Nhà Restaurant)
     private static final Color FOREST_BG = new Color(32, 43, 37);
     private static final Color FOREST_CIRCLE_1 = new Color(29, 41, 34);
@@ -47,11 +47,11 @@ public class Customer extends JFrame {
     private CTextField txtNote;
     private JTabbedPane rightTabbedPane;
 
-    public Customer() {
+    public CustomerGUI() {
         this(1L, 1L);
     }
 
-    public Customer(Long tableId, Long userId) {
+    public CustomerGUI(Long tableId, Long userId) {
         this.currentTableId = tableId;
         this.currentUserId = userId;
 
@@ -653,6 +653,6 @@ public class Customer extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Customer().setVisible(true));
+        SwingUtilities.invokeLater(() -> new CustomerGUI().setVisible(true));
     }
 }
