@@ -31,7 +31,7 @@ public class ServerOrderBUS {
 
         // 2. Sinh mã đơn hàng duy nhất (Order Code <= 30 ký tự)
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddHHmmss"));
-        String code = "HDL-T" + (order.getTableId() != null ? order.getTableId() : "0") + "-" + timestamp;
+        String code = "HDL-T" + (order.getTableId() != null ? order.getTableId() : "0") + "-" + timestamp + "-" + java.util.UUID.randomUUID().toString().substring(0, 6);
         order.setOrderCode(code);
         order.setOrderType(OrderType.DINE_IN);
         order.setStatus(OrderStatus.PENDING);

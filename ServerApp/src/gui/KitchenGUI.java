@@ -2,6 +2,7 @@ package gui;
 
 import api.SocketServer;
 import bus.ServerOrderBUS;
+import bus.KdsOrderBUS;
 import dto.*;
 
 import javax.swing.*;
@@ -26,6 +27,8 @@ public class KitchenGUI extends JFrame {
 
     private SocketServer socketServer;
     private final ServerOrderBUS serverOrderBUS = new ServerOrderBUS();
+    private final KdsOrderBUS kdsOrderBUS = new KdsOrderBUS();
+    private boolean pollingKitchenQueue = false;
 
     private DefaultTableModel kitchenTableModel;
     private JTable kitchenTable;
@@ -48,6 +51,10 @@ public class KitchenGUI extends JFrame {
         socketServer = new SocketServer(this::onSocketEventFromClient);
         socketServer.startServer();
         appendLog("✅ [BẾP NHÀ TCP SERVER] Đã mở cổng 8888 thành công. Đang chờ các Tablet bàn khách kết nối...");
+        // Đơn tạo/cập nhật qua KDS BUS sẽ tự xuất hiện, không cần Spring API.
+        javax.swing.Timer refreshTimer = new javax.swing.Timer(5000, e -> refreshKitchenQueue());
+        refreshTimer.start();
+        refreshKitchenQueue();
     }
 
     // 1. HEADER ĐỒNG BỘ AUTHFRAME
@@ -261,7 +268,7 @@ public class KitchenGUI extends JFrame {
         boolean updatedDB = serverOrderBUS.changeDishStatusByKitchen(orderItemId, newStatus);
         if (updatedDB) {
             kitchenTableModel.setValueAt(newStatus.name(), row, 5);
-            SocketServer.pushStatusToTable(tableId, orderItemId, newStatus);
+            if (tableId != null) SocketServer.pushStatusToTable(tableId, orderItemId, newStatus);
             appendLog("📤 [PUSH -> Bàn #" + tableId + "] Món '" + foodName + "' (Item #" + orderItemId + ") -> " + newStatus.name());
         } else {
             JOptionPane.showMessageDialog(this, "Không thể cập nhật trạng thái xuống Database!", "Lỗi DB", JOptionPane.ERROR_MESSAGE);
@@ -304,6 +311,30 @@ public class KitchenGUI extends JFrame {
                     item.getStatus().name()
             });
         }
+    }
+
+    private void refreshKitchenQueue() {
+        if(pollingKitchenQueue)return;
+        pollingKitchenQueue=true;
+        new SwingWorker<List<KitchenTaskDTO>,Void>() {
+            @Override protected List<KitchenTaskDTO> doInBackground() throws Exception {return kdsOrderBUS.getKitchenQueue();}
+            @Override protected void done() {
+                try {
+                    List<KitchenTaskDTO> queue=get();
+                    Long selectedItem=null;
+                    int selected=kitchenTable.getSelectedRow();
+                    if(selected>=0) selectedItem=(Long)kitchenTableModel.getValueAt(kitchenTable.convertRowIndexToModel(selected),0);
+                    kitchenTableModel.setRowCount(0);
+                    int selectRow=-1;
+                    for(KitchenTaskDTO task:queue) {
+                        if(selectedItem!=null && selectedItem.longValue()==task.getItemId()) selectRow=kitchenTableModel.getRowCount();
+                        kitchenTableModel.addRow(new Object[]{task.getItemId(),task.getTableId(),task.getOrderId(),task.getFoodName(),task.getQuantity(),task.getStatus().name()});
+                    }
+                    if(selectRow>=0) kitchenTable.setRowSelectionInterval(selectRow,selectRow);
+                }catch(Exception ex){/* Tránh hiện popup lặp lại nếu DB tạm mất kết nối */}
+                finally{pollingKitchenQueue=false;}
+            }
+        }.execute();
     }
 
     private void appendLog(String log) {

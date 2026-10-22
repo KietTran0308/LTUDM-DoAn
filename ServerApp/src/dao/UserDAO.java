@@ -12,7 +12,7 @@ public class UserDAO {
     public UserDTO authenticate(String emailOrPhone, String passwordHash) {
         String sql = "SELECT u.*, r.nameRole FROM users u " +
                 "JOIN roles r ON u.roleID = r.roleID " +
-                "WHERE (u.email = ? OR u.phone = ?) AND u.password_hash = ? AND u.is_active = TRUE";
+                "WHERE (u.email = ? OR u.phone = ?) AND u.is_active = TRUE";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -23,10 +23,9 @@ public class UserDAO {
             ps = conn.prepareStatement(sql);
             ps.setString(1, emailOrPhone.trim());
             ps.setString(2, emailOrPhone.trim());
-            ps.setString(3, passwordHash.trim());
             rs = ps.executeQuery();
 
-            if (rs.next()) {
+            if (rs.next() && bus.PasswordUtil.matches(passwordHash, rs.getString("password_hash"))) {
                 UserDTO user = new UserDTO(
                         rs.getLong("id"),
                         rs.getLong("roleID"),

@@ -14,6 +14,7 @@ public class serverAuthBUS {
         if (user == null) {
             throw new Exception("Tài khoản hoặc mật khẩu không chính xác (hoặc đã bị khóa)!");
         }
+        user.setPasswordHash(null);
         return user;
     }
 
@@ -21,6 +22,9 @@ public class serverAuthBUS {
         if (userDAO.existsByEmail(reqUser.getEmail())) {
             throw new Exception("Email '" + reqUser.getEmail() + "' đã được sử dụng!");
         }
-        return userDAO.registerUser(reqUser);
+        reqUser.setPasswordHash(PasswordUtil.encode(reqUser.getPasswordHash()));
+        UserDTO created = userDAO.registerUser(reqUser);
+        if (created != null) created.setPasswordHash(null);
+        return created;
     }
 }

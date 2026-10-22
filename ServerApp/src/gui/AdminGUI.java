@@ -74,6 +74,8 @@ public class AdminGUI extends JFrame {
         mainTabs.addTab("  🍲 Quản Lý Thực Đơn (Foods)  ", createFoodManagementTab());
         mainTabs.addTab("  ⚠️ Kho Nguyên Liệu & Cảnh Báo Tồn  ", createInventoryAlertTab());
         mainTabs.addTab("  📊 Thống Kê Doanh Thu (Bills)  ", createRevenueAnalyticsTab());
+        // Chức năng RestaurantKDS đã chuyển thành Java Swing + BUS + JDBC (không module mới).
+        mainTabs.addTab("  ⚙️ Quản lý KDS (Java thuần)  ", new KdsManagementPanel());
 
         mainTabs.addChangeListener(e -> refreshAllData());
 
